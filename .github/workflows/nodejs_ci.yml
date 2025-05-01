@@ -1,0 +1,38 @@
+name: Node.js CI
+
+env:
+  OUTPUT_PATH: ${{ github.workspace }}
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/nodejs_ci.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['latest']
+
+    steps:
+      # Step to checkout the repository
+      - uses: actions/checkout@v4
+
+      # Step to cache Node.js dependencies
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('${{ env.OUTPUT_PATH }}/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+
+      # Step to set up the specified version of Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix. Node-version }}
